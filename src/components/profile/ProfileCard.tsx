@@ -40,82 +40,82 @@ const ProfileCard = ({
     <Card 
       variant="elevated" 
       hover
-      className="h-full group bg-card dark:bg-card overflow-hidden"
+      className="h-full group bg-card/80 backdrop-blur-sm border-primary/5 overflow-hidden"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
-      <div className="p-6">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center space-x-4">
-            <Avatar className="h-16 w-16 border-2 border-white shadow-md transition-transform group-hover:scale-105">
+      <div className="p-4">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center space-x-3">
+            <Avatar className="h-12 w-12 border-2 border-primary/10 shadow-sm transition-transform group-hover:scale-105 ring-2 ring-primary/5">
               {imageUrl ? (
                 <AvatarImage src={imageUrl} alt={name} className="object-cover" />
               ) : (
-                <AvatarFallback className="text-lg bg-primary text-primary-foreground">
+                <AvatarFallback className="text-md bg-primary text-primary-foreground">
                   {initials}
                 </AvatarFallback>
               )}
             </Avatar>
-            <div className="space-y-1">
-              <h3 className="font-semibold text-lg leading-tight">{name}</h3>
-              <p className="text-muted-foreground">{role}</p>
+            <div>
+              <h3 className="font-semibold text-base leading-tight">{name}</h3>
+              <p className="text-sm text-muted-foreground">{role}</p>
             </div>
           </div>
           {available && (
-            <Badge variant="default" className="bg-green-500 hover:bg-green-600">
+            <Badge variant="default" className="bg-green-500 hover:bg-green-600 text-xs">
               Available
             </Badge>
           )}
         </div>
 
-        <div className="mt-6 space-y-3">
-          <div className="flex items-center text-sm text-muted-foreground">
-            <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
+        <div className="space-y-2 mb-3">
+          <div className="flex items-center text-xs text-muted-foreground">
+            <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
             <span>{location}</span>
           </div>
-          <div className="flex items-center text-sm text-muted-foreground">
-            <Briefcase className="h-4 w-4 mr-2 flex-shrink-0" />
-            <span>{role}</span>
-          </div>
-          <div className="flex items-center text-sm text-muted-foreground">
-            <Clock className="h-4 w-4 mr-2 flex-shrink-0" />
-            <span>{experience} experience</span>
+          <div className="flex items-center text-xs text-muted-foreground">
+            <Clock className="h-3 w-3 mr-1 flex-shrink-0" />
+            <span>{experience}</span>
           </div>
         </div>
 
-        <div className="mt-6">
-          <p className="text-sm font-medium mb-2">Skills</p>
-          <div className="flex flex-wrap gap-1.5">
-            {skills.map((skill) => (
+        <div>
+          <div className="flex flex-wrap gap-1 mt-2">
+            {skills.slice(0, 3).map((skill) => (
               <Badge 
                 key={skill} 
                 variant="secondary" 
-                className="font-normal transition-colors"
+                className="font-normal text-xs transition-colors bg-secondary/50 backdrop-blur-sm"
               >
                 {skill}
               </Badge>
             ))}
+            {skills.length > 3 && (
+              <Badge variant="outline" className="text-xs">
+                +{skills.length - 3}
+              </Badge>
+            )}
           </div>
         </div>
       </div>
 
-      <CardFooter className="px-6 py-4 bg-muted/30 border-t flex justify-between items-center">
+      <CardFooter className="px-4 py-3 bg-muted/30 border-t border-primary/5 flex justify-between items-center">
         <Link to={`/profile/${id}`}>
           <Button 
             size="sm" 
-            variant="outline" 
-            className="text-sm font-medium transition-all"
+            variant="ghost" 
+            className="text-xs h-8 px-2 hover:bg-primary/10"
           >
             View Profile
-            <ExternalLink className="ml-2 h-3.5 w-3.5" />
+            <ExternalLink className="ml-1 h-3 w-3" />
           </Button>
         </Link>
         <Button 
           size="sm" 
           variant="default" 
-          className="text-sm font-medium transition-all"
+          className="text-xs h-8 px-2 bg-primary/90 hover:bg-primary"
         >
-          <MessageSquare className="mr-2 h-3.5 w-3.5" />
+          <MessageSquare className="mr-1 h-3 w-3" />
           Contact
         </Button>
       </CardFooter>

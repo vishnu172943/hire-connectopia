@@ -8,7 +8,7 @@ import Features from '@/components/home/Features';
 import { APP_NAME, APP_DESCRIPTION, DUMMY_PROFESSIONALS } from '@/lib/constants';
 import ProfileCard from '@/components/profile/ProfileCard';
 import Button from '@/components/ui-custom/Button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -30,34 +30,40 @@ const Index = () => {
           <Features />
           
           {/* Featured Professionals Section */}
-          <section className="py-24 px-4">
-            <div className="container mx-auto max-w-6xl">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
-                <div>
-                  <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight mb-3">
-                    Featured Professionals
+          <section className="py-16 px-4 relative overflow-hidden">
+            {/* Shine effect background elements */}
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute top-[20%] right-[10%] w-[50%] h-[30%] rounded-full bg-gradient-to-r from-primary/5 via-purple-400/10 to-blue-400/5 blur-2xl" />
+              <div className="absolute bottom-[10%] left-[20%] w-[40%] h-[20%] rounded-full bg-gradient-to-r from-pink-400/5 via-amber-300/10 to-yellow-200/5 blur-2xl" />
+            </div>
+            
+            <div className="container mx-auto max-w-6xl relative z-10">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+                <div className="flex items-center gap-2">
+                  <span className="text-primary/80">
+                    <Sparkles className="h-5 w-5 animate-pulse-soft" />
+                  </span>
+                  <h2 className="font-display text-2xl md:text-3xl font-bold tracking-tight">
+                    Featured Talent
                   </h2>
-                  <p className="text-lg text-muted-foreground max-w-2xl">
-                    Explore some of our top talent from around the world
-                  </p>
                 </div>
                 <Button 
                   variant="outline" 
-                  size="lg" 
-                  className="mt-4 md:mt-0"
+                  size="sm" 
+                  className="mt-4 md:mt-0 bg-gradient-to-r from-background to-secondary/40 hover:from-background hover:to-secondary/60 transition-all duration-300"
                   onClick={() => navigate('/search')}
                   icon={<ArrowRight />}
                   iconPosition="right"
                 >
-                  View all professionals
+                  View all
                 </Button>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {DUMMY_PROFESSIONALS.map((professional, index) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {DUMMY_PROFESSIONALS.slice(0, 4).map((professional, index) => (
                   <div
                     key={professional.id}
-                    className={`animate-fade-in delay-${index * 100}`}
+                    className={`animate-fade-in delay-${index * 100} transform hover:translate-y-[-4px] transition-transform duration-300`}
                   >
                     <ProfileCard {...professional} />
                   </div>
@@ -67,8 +73,13 @@ const Index = () => {
           </section>
           
           {/* CTA Section */}
-          <section className="py-20 px-4 bg-primary text-primary-foreground">
-            <div className="container mx-auto max-w-4xl text-center">
+          <section className="py-20 px-4 bg-gradient-to-r from-primary to-primary/90 text-primary-foreground relative overflow-hidden">
+            {/* Shine overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/10"></div>
+            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+            <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+            
+            <div className="container mx-auto max-w-4xl text-center relative z-10">
               <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight mb-6">
                 Ready to find your perfect tech match?
               </h2>
