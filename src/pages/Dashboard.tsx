@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { Helmet } from 'react-helmet';
+import { HelmetProvider, Helmet } from 'react-helmet-async';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
@@ -23,7 +22,7 @@ const Dashboard = () => {
   };
 
   return (
-    <>
+    <HelmetProvider>
       <Helmet>
         <title>Dashboard | {APP_NAME}</title>
       </Helmet>
@@ -202,7 +201,7 @@ const Dashboard = () => {
         
         <Footer />
       </div>
-    </>
+    </HelmetProvider>
   );
 };
 

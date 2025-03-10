@@ -30,6 +30,9 @@ const Button = ({
   if (variant === 'primary') shadcnVariant = 'default';
   if (variant === 'gradient') shadcnVariant = 'default';
 
+  // Map xl size to lg for shadcn button (since it doesn't have xl)
+  const shadcnSize = size === 'xl' ? 'lg' : size;
+
   // Special case for gradient button
   if (variant === 'gradient') {
     return (
@@ -85,11 +88,12 @@ const Button = ({
   return (
     <ShadcnButton
       variant={shadcnVariant}
-      size={size}
+      size={shadcnSize}
       className={cn(
         fullWidth && 'w-full',
         isLoading && 'opacity-80 pointer-events-none',
         variant === 'primary' && 'bg-primary hover:bg-primary/90 text-primary-foreground',
+        size === 'xl' && 'h-12 px-10 text-lg',
         className
       )}
       disabled={isLoading || props.disabled}

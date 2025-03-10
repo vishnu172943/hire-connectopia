@@ -1,24 +1,26 @@
 
-import { Helmet } from 'react-helmet';
+import { useNavigate } from 'react-router-dom';
+import { HelmetProvider, Helmet } from 'react-helmet-async';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import Hero from '@/components/home/Hero';
 import Features from '@/components/home/Features';
 import { APP_NAME, APP_DESCRIPTION, DUMMY_PROFESSIONALS } from '@/lib/constants';
 import ProfileCard from '@/components/profile/ProfileCard';
-import { Button } from '@/components/ui-custom/Button';
+import Button from '@/components/ui-custom/Button';
 import { ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
   const navigate = useNavigate();
 
   return (
     <>
-      <Helmet>
-        <title>{APP_NAME} | {APP_DESCRIPTION}</title>
-        <meta name="description" content={APP_DESCRIPTION} />
-      </Helmet>
+      <HelmetProvider>
+        <Helmet>
+          <title>{APP_NAME} | {APP_DESCRIPTION}</title>
+          <meta name="description" content={APP_DESCRIPTION} />
+        </Helmet>
+      </HelmetProvider>
 
       <div className="min-h-screen flex flex-col bg-background">
         <Navbar />

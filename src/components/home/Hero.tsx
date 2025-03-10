@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button as CustomButton } from '@/components/ui-custom/Button';
+import Button from '@/components/ui-custom/Button';
 import SearchBar from '@/components/search/SearchBar';
 import { Badge } from '@/components/ui/badge';
 import { POPULAR_SKILLS, ROUTES } from '@/lib/constants';

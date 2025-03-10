@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { Helmet } from 'react-helmet';
+import { HelmetProvider, Helmet } from 'react-helmet-async';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
@@ -102,9 +101,11 @@ const Profile = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{profile.name} | {APP_NAME}</title>
-      </Helmet>
+      <HelmetProvider>
+        <Helmet>
+          <title>{profile.name} | {APP_NAME}</title>
+        </Helmet>
+      </HelmetProvider>
 
       <div className="min-h-screen flex flex-col bg-background">
         <Navbar />
