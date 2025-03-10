@@ -1,15 +1,17 @@
 
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Search, MessageSquare, Bell, User, Menu, X } from 'lucide-react';
 import { APP_NAME, ROUTES } from '@/lib/constants';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // This would come from auth context
+  const navigate = useNavigate();
+  const { isAuthenticated, signOut, profile } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,6 +28,11 @@ const Navbar = () => {
 
   const isActive = (path: string) => {
     return location.pathname === path;
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate(ROUTES.HOME);
   };
 
   return (
@@ -115,6 +122,11 @@ const Navbar = () => {
                     <User className="h-5 w-5 text-primary" />
                   </Button>
                 </Link>
+                <div className="hidden sm:block">
+                  <Button variant="ghost" onClick={handleSignOut}>
+                    Sign Out
+                  </Button>
+                </div>
               </>
             ) : (
               <>
@@ -191,7 +203,17 @@ const Navbar = () => {
               About
             </Link>
             
-            {!isAuthenticated && (
+            {isAuthenticated ? (
+              <Button
+                className="block w-full px-4 py-3 rounded-md text-base font-medium text-white"
+                onClick={() => {
+                  handleSignOut();
+                  setIsMobileMenuOpen(false);
+                }}
+              >
+                Sign out
+              </Button>
+            ) : (
               <Link
                 to={ROUTES.SIGN_IN}
                 className="block px-4 py-3 rounded-md text-base font-medium hover:bg-primary/5 text-foreground/80 hover:text-foreground transition-colors sm:hidden"

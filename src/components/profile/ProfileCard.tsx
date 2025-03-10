@@ -1,11 +1,13 @@
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import Card, { CardContent, CardFooter } from '@/components/ui-custom/Card';
 import { User, MapPin, Briefcase, Clock, MessageSquare, ExternalLink } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 interface ProfileCardProps {
   id: string;
@@ -29,12 +31,32 @@ const ProfileCard = ({
   available,
 }: ProfileCardProps) => {
   const [isHovering, setIsHovering] = useState(false);
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   
   const initials = name
     .split(' ')
     .map((n) => n[0])
     .join('')
     .toUpperCase();
+
+  const handleContactClick = () => {
+    if (!isAuthenticated) {
+      toast({
+        title: 'Sign in required',
+        description: 'Please sign in to contact this professional',
+      });
+      navigate('/sign-in');
+      return;
+    }
+    
+    // For now, just show a toast. In a real app, this would open a messaging interface
+    toast({
+      title: 'Contact initiated',
+      description: `You can now message ${name}`,
+    });
+  };
 
   return (
     <Card 
@@ -114,6 +136,7 @@ const ProfileCard = ({
           size="sm" 
           variant="default" 
           className="text-xs h-8 px-2 bg-primary/90 hover:bg-primary"
+          onClick={handleContactClick}
         >
           <MessageSquare className="mr-1 h-3 w-3" />
           Contact
