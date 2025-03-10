@@ -77,20 +77,20 @@ const Hero = () => {
           </div>
           
           <div className="flex flex-col sm:flex-row gap-4 animate-fade-in">
-            <CustomButton 
+            <Button 
               variant="gradient" 
               size="lg"
               onClick={() => navigate(ROUTES.SIGN_UP)}
             >
               Get started for free
-            </CustomButton>
-            <CustomButton 
+            </Button>
+            <Button 
               variant="outline" 
               size="lg"
               onClick={() => navigate(ROUTES.SEARCH)}
             >
               Browse talents
-            </CustomButton>
+            </Button>
           </div>
         </div>
         
