@@ -29,9 +29,9 @@ export const useDeepSeekSearch = () => {
           context: DUMMY_PROFESSIONALS.map(profile => ({
             id: profile.id,
             name: profile.name,
-            title: profile.title,
+            title: profile.role, // Use 'role' instead of 'title' to match the profile structure
             skills: profile.skills,
-            bio: profile.bio
+            bio: profile.experience // Use 'experience' as a substitute for 'bio'
           }))
         }
       });
@@ -49,17 +49,17 @@ export const useDeepSeekSearch = () => {
       // Filter and sort profiles based on DeepSeek results
       if (result.matches && result.matches.length > 0) {
         const matchedProfiles = DUMMY_PROFESSIONALS.filter(profile => 
-          result.matches.includes(profile.id)
+          result.matches.includes(Number(profile.id)) // Convert string ID to number
         );
         
         // Sort profiles in the same order as the matches array
         const sortedProfiles = matchedProfiles.sort((a, b) => {
-          return result.matches.indexOf(a.id) - result.matches.indexOf(b.id);
+          return result.matches.indexOf(Number(a.id)) - result.matches.indexOf(Number(b.id)); // Convert string IDs to numbers
         });
         
         // Add any remaining profiles not in the matches
         const remainingProfiles = DUMMY_PROFESSIONALS.filter(
-          profile => !result.matches.includes(profile.id)
+          profile => !result.matches.includes(Number(profile.id)) // Convert string ID to number
         );
         
         return [...sortedProfiles, ...remainingProfiles];
