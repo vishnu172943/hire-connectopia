@@ -15,8 +15,8 @@ interface Developer {
   hourly_rate: number;
 }
 
-interface DeepSeekSearchResult {
-  matches: number[];
+interface SearchResult {
+  matches: string[];
   explanation: string;
 }
 
@@ -67,9 +67,9 @@ export const useDeepSeekSearch = () => {
           context: developers.map(developer => ({
             id: developer.id,
             name: developer.name,
-            title: developer.role, // DeepSeek function expects 'title'
+            role: developer.role, // Pass role instead of title
             skills: developer.skills,
-            bio: developer.experience // DeepSeek function expects 'bio'
+            experience: developer.experience // Pass experience instead of bio
           }))
         }
       });
@@ -78,29 +78,29 @@ export const useDeepSeekSearch = () => {
         throw new Error(error.message);
       }
 
-      console.log('DeepSeek search results:', data);
+      console.log('Search results:', data);
 
       // Handle the response
-      const result = data as DeepSeekSearchResult;
+      const result = data as SearchResult;
       setSearchExplanation(result.explanation);
 
-      // Filter and sort profiles based on DeepSeek results
+      // Filter and sort profiles based on results
       if (result.matches && result.matches.length > 0) {
         // Find developers with matching IDs
         const matchedDevelopers = developers.filter(developer => 
-          result.matches.some(matchId => matchId.toString() === developer.id)
+          result.matches.some(matchId => matchId === developer.id)
         );
         
         // Sort developers in the same order as the matches array
         const sortedDevelopers = [...matchedDevelopers].sort((a, b) => {
-          const indexA = result.matches.findIndex(matchId => matchId.toString() === a.id);
-          const indexB = result.matches.findIndex(matchId => matchId.toString() === b.id);
+          const indexA = result.matches.findIndex(matchId => matchId === a.id);
+          const indexB = result.matches.findIndex(matchId => matchId === b.id);
           return indexA - indexB;
         });
         
         // Add any remaining developers not in the matches
         const remainingDevelopers = developers.filter(
-          developer => !result.matches.some(matchId => matchId.toString() === developer.id)
+          developer => !result.matches.some(matchId => matchId === developer.id)
         );
         
         return [...sortedDevelopers, ...remainingDevelopers];
@@ -108,7 +108,7 @@ export const useDeepSeekSearch = () => {
 
       return developers;
     } catch (error) {
-      console.error('Error searching with DeepSeek:', error);
+      console.error('Error searching:', error);
       toast.error('Search enhancement failed. Falling back to basic search.');
       return developers;
     } finally {
@@ -120,7 +120,6 @@ export const useDeepSeekSearch = () => {
     searchWithDeepSeek, 
     isSearching, 
     searchExplanation,
-
     developers,
     isLoading 
   };

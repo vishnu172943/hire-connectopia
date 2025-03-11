@@ -1,7 +1,7 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const DEEPSEEK_API_KEY = Deno.env.get('DEEPSEEK_API_KEY');
+const PIXTRAL_API_KEY = "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";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -24,15 +24,15 @@ serve(async (req) => {
     console.log("Processing search query:", query);
     console.log("Context items count:", context?.length || 0);
 
-    // Call DeepSeek API
-    const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
+    // Call Pixtral API
+    const response = await fetch("https://api.together.xyz/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${DEEPSEEK_API_KEY}`,
+        "Authorization": `Bearer ${PIXTRAL_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "deepseek-coder",
+        model: "Qwen/Qwen1.5-12B-Chat",
         messages: [
           {
             role: "system",
@@ -57,12 +57,12 @@ serve(async (req) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("DeepSeek API error:", errorText);
-      throw new Error(`DeepSeek API error: ${response.status}`);
+      console.error("API error:", errorText);
+      throw new Error(`API error: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log("DeepSeek response received");
+    console.log("API response received");
 
     // Extract the relevant profiles and explanation
     let result;
@@ -91,7 +91,7 @@ serve(async (req) => {
         };
       }
     } catch (e) {
-      console.error("Error processing DeepSeek response:", e);
+      console.error("Error processing API response:", e);
       result = { matches: [], explanation: "Failed to process search results" };
     }
 
@@ -99,7 +99,7 @@ serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error("Error in deepseek-search function:", error);
+    console.error("Error in search function:", error);
     return new Response(
       JSON.stringify({ error: error.message }),
       {
