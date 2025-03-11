@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { HelmetProvider, Helmet } from 'react-helmet-async';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { APP_NAME, DUMMY_PROFESSIONALS } from '@/lib/constants';
+import { APP_NAME } from '@/lib/constants';
 import SearchBar from '@/components/search/SearchBar';
 import ProfileCard from '@/components/profile/ProfileCard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -19,11 +19,20 @@ const Search = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('freelancers');
   const [showFilters, setShowFilters] = useState(false);
-  const [profiles, setProfiles] = useState(DUMMY_PROFESSIONALS);
-  const { searchWithDeepSeek, isSearching, searchExplanation } = useDeepSeekSearch();
+  const { 
+    searchWithDeepSeek, 
+    isSearching, 
+    searchExplanation, 
+    developers, 
+    isLoading 
+  } = useDeepSeekSearch();
+  const [filteredDevelopers, setFilteredDevelopers] = useState(developers);
   const { toast } = useToast();
 
   useEffect(() => {
+    // Initialize filtered developers with all developers
+    setFilteredDevelopers(developers);
+    
     // Parse search params from URL on initial load
     const params = new URLSearchParams(window.location.search);
     const urlQuery = params.get('q');
@@ -31,7 +40,7 @@ const Search = () => {
       setSearchQuery(urlQuery);
       handleSearch(urlQuery);
     }
-  }, []);
+  }, [developers]);
 
   const handleSearch = async (query: string) => {
     setSearchQuery(query);
@@ -46,13 +55,13 @@ const Search = () => {
     window.history.pushState({}, '', url);
     
     if (!query.trim()) {
-      setProfiles(DUMMY_PROFESSIONALS);
+      setFilteredDevelopers(developers);
       return;
     }
     
     try {
       const results = await searchWithDeepSeek(query);
-      setProfiles(results);
+      setFilteredDevelopers(results);
       
       if (results.length === 0) {
         toast({
@@ -100,7 +109,7 @@ const Search = () => {
               />
             </div>
             
-            {isSearching && (
+            {(isLoading || isSearching) && (
               <div className="flex justify-center my-8">
                 <Spinner size="lg" />
               </div>
@@ -156,19 +165,29 @@ const Search = () => {
               )}
               
               <TabsContent value="freelancers" className="space-y-6">
-                {profiles.length > 0 ? (
+                {!isLoading && !isSearching && filteredDevelopers.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {profiles.map((professional) => (
-                      <ProfileCard key={professional.id} {...professional} />
+                    {filteredDevelopers.map((developer) => (
+                      <ProfileCard 
+                        key={developer.id} 
+                        id={developer.id}
+                        name={developer.name}
+                        role={developer.role}
+                        location={developer.location}
+                        imageUrl={developer.image_url}
+                        skills={developer.skills}
+                        experience={developer.experience}
+                        available={developer.available}
+                      />
                     ))}
                   </div>
-                ) : (
+                ) : !isLoading && !isSearching ? (
                   <div className="text-center py-10">
                     <p className="text-muted-foreground">
                       No matching profiles found. Try a different search query.
                     </p>
                   </div>
-                )}
+                ) : null}
               </TabsContent>
               
               <TabsContent value="jobs">

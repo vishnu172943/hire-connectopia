@@ -22,7 +22,7 @@ serve(async (req) => {
     }
 
     console.log("Processing search query:", query);
-    console.log("Context:", context);
+    console.log("Context items count:", context?.length || 0);
 
     // Call DeepSeek API
     const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
@@ -32,16 +32,16 @@ serve(async (req) => {
         "Authorization": `Bearer ${DEEPSEEK_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "deepseek-chat",
+        model: "deepseek-coder",
         messages: [
           {
             role: "system",
             content: `You are a specialized search assistant for a tech talent platform. 
             Your task is to enhance search queries by understanding user intent and context.
-            When given a search query and context information about available profiles, 
-            return an array of relevant profile IDs sorted by relevance, 
+            When given a search query and context information about available developer profiles, 
+            return an array of relevant profile UUIDs sorted by relevance, 
             along with an explanation of why each profile matches.
-            Format your response as a JSON object with 'matches' (array of profile IDs) 
+            Format your response as a JSON object with 'matches' (array of profile UUIDs as strings) 
             and 'explanation' (text explaining the reasoning).`
           },
           {
@@ -62,21 +62,31 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    console.log("DeepSeek response:", data);
+    console.log("DeepSeek response received");
 
     // Extract the relevant profiles and explanation
     let result;
     try {
       const content = data.choices[0].message.content;
+      console.log("Response content:", content);
+      
       // Try to parse as JSON
       try {
         result = JSON.parse(content);
+        console.log("Successfully parsed JSON response");
       } catch (e) {
         // If parsing fails, use regex to extract profile IDs
         console.log("Parsing JSON failed, using regex extraction");
-        const matches = content.match(/\b\d+\b/g) || [];
+        
+        // First try to extract UUIDs
+        const uuidRegex = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
+        const matches = content.match(uuidRegex) || [];
+        
+        // If no UUIDs found, try to extract any numeric IDs
+        const numericMatches = matches.length === 0 ? (content.match(/\b\d+\b/g) || []) : [];
+        
         result = {
-          matches: [...new Set(matches)].map(id => parseInt(id)),
+          matches: [...new Set(matches.length > 0 ? matches : numericMatches)],
           explanation: content
         };
       }
