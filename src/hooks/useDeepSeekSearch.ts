@@ -67,9 +67,9 @@ export const useDeepSeekSearch = () => {
           context: developers.map(developer => ({
             id: developer.id,
             name: developer.name,
-            role: developer.role, // Pass role instead of title
+            role: developer.role,
             skills: developer.skills,
-            experience: developer.experience // Pass experience instead of bio
+            experience: developer.experience
           }))
         }
       });
@@ -82,7 +82,11 @@ export const useDeepSeekSearch = () => {
 
       // Handle the response
       const result = data as SearchResult;
-      setSearchExplanation(result.explanation);
+      
+      // Format explanation to be more readable if it's a JSON string
+      let formattedExplanation = result.explanation;
+      
+      setSearchExplanation(formattedExplanation);
 
       // Filter and sort profiles based on results
       if (result.matches && result.matches.length > 0) {

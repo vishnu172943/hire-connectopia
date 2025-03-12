@@ -1,7 +1,7 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const PIXTRAL_API_KEY = "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";
+const GEMINI_API_KEY = "AIzaSyAPuyc1O1jKBi0KawKmi_jeExdwiHq7PXU";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -24,34 +24,45 @@ serve(async (req) => {
     console.log("Processing search query:", query);
     console.log("Context items count:", context?.length || 0);
 
-    // Call Pixtral API
-    const response = await fetch("https://api.together.xyz/v1/chat/completions", {
+    // Format the context for Gemini
+    const formattedContext = context.map(dev => 
+      `ID: ${dev.id}\nName: ${dev.name}\nRole: ${dev.role}\nSkills: ${dev.skills.join(', ')}\nExperience: ${dev.experience}`
+    ).join('\n\n');
+
+    // Call Gemini API
+    const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${PIXTRAL_API_KEY}`,
+        "x-goog-api-key": GEMINI_API_KEY,
       },
       body: JSON.stringify({
-        model: "Qwen/Qwen1.5-12B-Chat",
-        messages: [
-          {
-            role: "system",
-            content: `You are a specialized search assistant for a tech talent platform. 
-            Your task is to enhance search queries by understanding user intent and context.
-            When given a search query and context information about available developer profiles, 
-            return an array of relevant profile UUIDs sorted by relevance, 
-            along with an explanation of why each profile matches.
-            Format your response as a JSON object with 'matches' (array of profile UUIDs as strings) 
-            and 'explanation' (text explaining the reasoning).`
-          },
-          {
-            role: "user",
-            content: `Search query: "${query}"
-            Available profiles context: ${JSON.stringify(context)}`
-          }
-        ],
-        temperature: 0.2,
-        max_tokens: 1000,
+        contents: [{
+          parts: [{
+            text: `You are a specialized search assistant for a tech talent platform.
+            
+Your task is to analyze a user's natural language search query and find the most relevant developer profiles from the database.
+
+Here is the user's search query: "${query}"
+
+Here are the available developer profiles:
+${formattedContext}
+
+Return a JSON object with the following format:
+{
+  "matches": ["uuid1", "uuid2", "uuid3"], // An array of profile IDs sorted by relevance
+  "explanation": "Detailed explanation of why these profiles match the query"
+}
+
+Focus on understanding the nuances of the query, including skills, experience level, and other requirements.
+Only include profiles that are truly relevant to the query.
+Limit your response to JSON format only.`
+          }]
+        }],
+        generationConfig: {
+          temperature: 0.2,
+          maxOutputTokens: 1000,
+        }
       }),
     });
 
@@ -67,7 +78,7 @@ serve(async (req) => {
     // Extract the relevant profiles and explanation
     let result;
     try {
-      const content = data.choices[0].message.content;
+      const content = data.candidates[0].content.parts[0].text;
       console.log("Response content:", content);
       
       // Try to parse as JSON

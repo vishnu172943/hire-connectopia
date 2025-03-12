@@ -97,7 +97,7 @@ const Search = () => {
             <div className="text-center mb-8 animate-fade-in">
               <h1 className="text-3xl font-bold tracking-tight mb-2">Discover Talent</h1>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Find and connect with the best tech professionals for your projects
+                Find and connect with the best tech professionals for your projects using natural language search
               </p>
             </div>
             
@@ -106,6 +106,7 @@ const Search = () => {
                 onSearch={handleSearch} 
                 initialQuery={searchQuery}
                 onFilterClick={toggleFilters}
+                placeholder="Try natural language search, e.g. 'Java developer with AI experience'"
               />
             </div>
             
@@ -119,11 +120,11 @@ const Search = () => {
               <Alert className="mb-6 max-w-4xl mx-auto">
                 <Info className="h-4 w-4" />
                 <AlertDescription>
-                  <div className="font-medium mb-2">AI-Enhanced Search</div>
+                  <div className="font-medium mb-2">AI-Enhanced Search Results</div>
                   <Textarea 
                     value={searchExplanation} 
                     readOnly 
-                    className="mt-2 h-20 text-sm opacity-80"
+                    className="mt-2 h-28 text-sm opacity-80"
                   />
                 </AlertDescription>
               </Alert>
