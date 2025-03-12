@@ -26,22 +26,25 @@ const Search = () => {
     developers, 
     isLoading 
   } = useDeepSeekSearch();
-  const [filteredDevelopers, setFilteredDevelopers] = useState(developers);
+  const [filteredDevelopers, setFilteredDevelopers] = useState([]);
   const { toast } = useToast();
   const [hasSearched, setHasSearched] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   useEffect(() => {
-    // Initialize filtered developers with all developers
-    setFilteredDevelopers(developers);
-    
-    // Parse search params from URL on initial load
-    const params = new URLSearchParams(window.location.search);
-    const urlQuery = params.get('q');
-    if (urlQuery) {
-      setSearchQuery(urlQuery);
-      handleSearch(urlQuery);
+    if (!isLoading && isInitialLoad) {
+      setFilteredDevelopers(developers);
+      setIsInitialLoad(false);
+      
+      // Parse search params from URL on initial load
+      const params = new URLSearchParams(window.location.search);
+      const urlQuery = params.get('q');
+      if (urlQuery) {
+        setSearchQuery(urlQuery);
+        handleSearch(urlQuery);
+      }
     }
-  }, [developers]);
+  }, [developers, isLoading]);
 
   const handleSearch = async (query: string) => {
     setSearchQuery(query);
@@ -78,6 +81,7 @@ const Search = () => {
         description: "An error occurred while searching. Please try again.",
         variant: "destructive",
       });
+      setFilteredDevelopers(developers);
     }
   };
 
@@ -121,7 +125,7 @@ const Search = () => {
               </div>
             )}
             
-            {searchExplanation && (
+            {searchExplanation && !isSearching && !isLoading && (
               <Alert className="mb-6 max-w-4xl mx-auto">
                 <Info className="h-4 w-4" />
                 <AlertDescription>
