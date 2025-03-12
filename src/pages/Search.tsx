@@ -28,6 +28,7 @@ const Search = () => {
   } = useDeepSeekSearch();
   const [filteredDevelopers, setFilteredDevelopers] = useState(developers);
   const { toast } = useToast();
+  const [hasSearched, setHasSearched] = useState(false);
 
   useEffect(() => {
     // Initialize filtered developers with all developers
@@ -44,6 +45,7 @@ const Search = () => {
 
   const handleSearch = async (query: string) => {
     setSearchQuery(query);
+    setHasSearched(true);
     
     // Update URL without reloading page
     const url = new URL(window.location.href);
@@ -113,6 +115,9 @@ const Search = () => {
             {(isLoading || isSearching) && (
               <div className="flex justify-center my-8">
                 <Spinner size="lg" />
+                <p className="ml-3 text-muted-foreground">
+                  {isLoading ? "Loading developers..." : "Searching..."}
+                </p>
               </div>
             )}
             
@@ -167,7 +172,7 @@ const Search = () => {
               
               <TabsContent value="freelancers" className="space-y-6">
                 {!isLoading && !isSearching && filteredDevelopers.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredDevelopers.map((developer) => (
                       <ProfileCard 
                         key={developer.id} 
@@ -182,10 +187,16 @@ const Search = () => {
                       />
                     ))}
                   </div>
-                ) : !isLoading && !isSearching ? (
+                ) : (!isLoading && !isSearching && hasSearched) ? (
                   <div className="text-center py-10">
                     <p className="text-muted-foreground">
                       No matching profiles found. Try a different search query.
+                    </p>
+                  </div>
+                ) : (!isLoading && !isSearching && !hasSearched) ? (
+                  <div className="text-center py-10">
+                    <p className="text-muted-foreground">
+                      Enter a search query to find tech professionals.
                     </p>
                   </div>
                 ) : null}

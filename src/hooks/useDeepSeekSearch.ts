@@ -18,6 +18,7 @@ interface Developer {
 interface SearchResult {
   matches: string[];
   explanation: string;
+  error?: string;
 }
 
 export const useDeepSeekSearch = () => {
@@ -60,6 +61,8 @@ export const useDeepSeekSearch = () => {
     setSearchExplanation(null);
 
     try {
+      console.log("Calling deepseek-search with query:", query);
+      
       // Call Supabase Edge Function
       const { data, error } = await supabase.functions.invoke('deepseek-search', {
         body: {
@@ -75,6 +78,7 @@ export const useDeepSeekSearch = () => {
       });
 
       if (error) {
+        console.error("Function invocation error:", error);
         throw new Error(error.message);
       }
 
@@ -83,7 +87,11 @@ export const useDeepSeekSearch = () => {
       // Handle the response
       const result = data as SearchResult;
       
-      // Format explanation to be more readable if it's a JSON string
+      if (result.error) {
+        throw new Error(result.error);
+      }
+      
+      // Format explanation to be more readable
       let formattedExplanation = result.explanation;
       
       setSearchExplanation(formattedExplanation);
@@ -113,7 +121,7 @@ export const useDeepSeekSearch = () => {
       return developers;
     } catch (error) {
       console.error('Error searching:', error);
-      toast.error('Search enhancement failed. Falling back to basic search.');
+      toast.error('Search failed: ' + (error instanceof Error ? error.message : 'Unknown error'));
       return developers;
     } finally {
       setIsSearching(false);

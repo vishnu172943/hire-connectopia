@@ -69,7 +69,7 @@ Limit your response to JSON format only.`
     if (!response.ok) {
       const errorText = await response.text();
       console.error("API error:", errorText);
-      throw new Error(`API error: ${response.status}`);
+      throw new Error(`API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
@@ -112,7 +112,7 @@ Limit your response to JSON format only.`
   } catch (error) {
     console.error("Error in search function:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error.message, matches: [], explanation: "An error occurred during search" }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
