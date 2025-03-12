@@ -24,9 +24,16 @@ serve(async (req) => {
     console.log("Processing search query:", query);
     console.log("Context items count:", context?.length || 0);
 
-    // Format the context for Gemini
+    // Format the context for Gemini with ALL developer data
     const formattedContext = context.map(dev => 
-      `ID: ${dev.id}\nName: ${dev.name}\nRole: ${dev.role}\nSkills: ${dev.skills.join(', ')}\nExperience: ${dev.experience}`
+      `ID: ${dev.id}
+Name: ${dev.name}
+Role: ${dev.role}
+Location: ${dev.location}
+Skills: ${dev.skills.join(', ')}
+Experience: ${dev.experience}
+Available: ${dev.available ? 'Yes' : 'No'}
+Hourly Rate: ${dev.hourly_rate ? '$' + dev.hourly_rate + '/hr' : 'Not specified'}`
     ).join('\n\n');
 
     // Call Gemini API

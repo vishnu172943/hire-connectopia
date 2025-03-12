@@ -63,7 +63,7 @@ export const useDeepSeekSearch = () => {
     try {
       console.log("Calling deepseek-search with query:", query);
       
-      // Call Supabase Edge Function
+      // Call Supabase Edge Function with complete developer data
       const { data, error } = await supabase.functions.invoke('deepseek-search', {
         body: {
           query,
@@ -71,8 +71,11 @@ export const useDeepSeekSearch = () => {
             id: developer.id,
             name: developer.name,
             role: developer.role,
+            location: developer.location,
             skills: developer.skills,
-            experience: developer.experience
+            experience: developer.experience,
+            available: developer.available,
+            hourly_rate: developer.hourly_rate
           }))
         }
       });
