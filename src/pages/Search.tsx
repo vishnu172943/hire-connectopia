@@ -15,6 +15,7 @@ const Search = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('freelancers');
   const [showFilters, setShowFilters] = useState(false);
+  const [onlyAvailable, setOnlyAvailable] = useState(false);
   const { 
     searchWithDeepSeek, 
     isSearching, 
@@ -40,6 +41,24 @@ const Search = () => {
       }
     }
   }, [developers, isLoading]);
+
+  // Apply filters whenever developer list or filter settings change
+  useEffect(() => {
+    if (!isLoading && !isSearching && filteredDevelopers.length > 0) {
+      applyFilters();
+    }
+  }, [onlyAvailable, filteredDevelopers.length]);
+
+  const applyFilters = () => {
+    let results = [...filteredDevelopers];
+    
+    // Apply availability filter if enabled
+    if (onlyAvailable) {
+      results = results.filter(dev => dev.available);
+    }
+    
+    setFilteredDevelopers(results);
+  };
 
   const handleSearch = async (query: string) => {
     setSearchQuery(query);
@@ -79,6 +98,10 @@ const Search = () => {
     }
   };
 
+  const handleAvailabilityChange = (onlyAvailable: boolean) => {
+    setOnlyAvailable(onlyAvailable);
+  };
+
   return (
     <HelmetProvider>
       <Helmet>
@@ -100,7 +123,10 @@ const Search = () => {
               <SearchExplanation explanation={searchExplanation} />
             )}
             
-            <SearchFilters show={showFilters} />
+            <SearchFilters 
+              show={showFilters} 
+              onAvailabilityChange={handleAvailabilityChange}
+            />
             
             <SearchResults 
               isLoading={isLoading}
